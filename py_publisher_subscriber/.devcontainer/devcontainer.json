@@ -1,0 +1,144 @@
+{
+  // ===========================================================================
+  // Dev Container Configuration — ROS2 Jazzy
+  // Purpose: Defines the VS Code Dev Container environment for ROS2 development.
+  //          VS Code reads this file to build/start the container and configure
+  //          the editor automatically when "Reopen in Container" is selected.
+  // ===========================================================================
+  "name": "ROS2 Jazzy",
+
+  // ---------------------------------------------------------------------------
+  // Build Configuration
+  // Purpose: Points VS Code to the Dockerfile that constructs the container image.
+  //          The context is the .devcontainer folder itself.
+  // ---------------------------------------------------------------------------
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+
+  // ---------------------------------------------------------------------------
+  // Container Run Arguments
+  // Purpose: Pass extra flags to `docker run` when the container starts:
+  //   --privileged:         Required for VirtualGL and hardware device access
+  //   DISPLAY:              Forward GUI windows to the host X server (XQuartz/VcXsrv)
+  //   --add-host:           Resolve 'host.docker.internal' on Linux hosts
+  //                         (macOS/Windows handle this automatically)
+  //   --rm
+  //   --name
+  //   -e
+  // ---------------------------------------------------------------------------
+  "runArgs": [
+    "--privileged",
+    "-e", "DISPLAY=host.docker.internal:0",
+    "-e", "TZ=Australia/Melbourne",
+    "--add-host=host.docker.internal:host-gateway",
+    "--rm",
+    "--name", "ros2_jazzy"
+  ],
+
+  // ---------------------------------------------------------------------------
+  // Default Remote User
+  // Purpose: VS Code terminal sessions and remote operations run as 'jazzy'
+  //          (non-root, full sudo rights) rather than root.
+  // ---------------------------------------------------------------------------
+  "remoteUser": "jazzy",
+
+  // ---------------------------------------------------------------------------
+  // Post-Create Command
+  // Purpose: Runs once after the container is first created (not on every start).
+  //          - rosdep update:   Refreshes the rosdep package index so `rosdep install`
+  //                             can resolve ROS package dependencies
+  //          - colcon build:    Pre-builds the workspace so the install overlay is
+  //                             available immediately on first open (workspace may be
+  //                             empty on first clone; colcon handles that gracefully)
+  // ---------------------------------------------------------------------------
+  "postCreateCommand": "mkdir -p ${containerWorkspaceFolder}/src && rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) ${containerWorkspaceFolder}/ && cd ${containerWorkspaceFolder} && colcon build",
+
+  // ---------------------------------------------------------------------------
+  // VS Code Extensions
+  // Purpose: Automatically install these extensions inside the Dev Container
+  //          so every developer gets an identical, ready-to-use editor setup.
+  //   - cpptools:           C/C++ IntelliSense, debugging, code browsing
+  //   - rde-pack / rde-ros-2: Ranch Hand Robotics ROS2 developer pack
+  //   - cmake / cmake-tools: CMakeLists.txt support and build integration
+  //   - vscode-xml:         URDF/SDF/launch XML editing with schema validation
+  //   - python:             Python language support
+  //   - autodocstring:      Auto-generate Python docstrings
+  //   - autopep8:           PEP8 auto-formatter (runs on save)
+  //   - pylint:             Python linter
+  //   - code-runner:        Run code snippets directly in the terminal
+  //   - doxdocgen:          Auto-generate Doxygen comments for C++
+  // ---------------------------------------------------------------------------
+ "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ranch-hand-robotics.rde-pack",
+        "ranch-hand-robotics.rde-ros-2",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools",
+        "redhat.vscode-xml",
+        "ms-python.python",
+        "njpwerner.autodocstring",
+        "ms-python.autopep8",
+        "ms-python.pylint",
+        "formulahendry.code-runner",
+        "cschlosser.doxdocgen"
+      ],
+
+      // -----------------------------------------------------------------------
+      // VS Code Settings (applied inside the container workspace)
+      // -----------------------------------------------------------------------
+      "settings": {
+        // Display — larger fonts for comfortable coding on high-DPI displays
+        "editor.fontSize": 25,
+        "terminal.integrated.fontSize": 15,
+
+        // Visual guide at column 100 (PEP8 / project line-length limit)
+        "editor.rulers": [100],
+
+        // Python-specific formatting (autopep8 on save, 4-space indent per PEP8)
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "ms-python.autopep8",
+          "editor.tabSize": 4,
+          "editor.insertSpaces": true
+        },
+
+        // C++-specific formatting (2-space indent, common in ROS2 packages)
+        "[cpp]": {
+          "editor.tabSize": 2,
+          "editor.insertSpaces": true
+        },
+
+        // Global defaults (C++ style wins for other file types)
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "files.trimTrailingWhitespace": true,
+
+        // autopep8 formatter configuration
+        // --max-line-length 100: matches the ruler and project convention
+        // --aggressive:          applies more PEP8 fixes beyond basic whitespace
+        "autopep8.args": [
+          "--max-line-length",
+          "100",
+          "--aggressive"
+        ],
+
+        // Code Runner: run files from their own directory, save before run,
+        //              display execution header, clear previous output, use integrated terminal
+        "code-runner.fileDirectoryAsCwd": true,
+        "code-runner.saveFileBeforeRun": true,
+        "code-runner.showExecutionMessage": true,
+        "code-runner.clearPreviousOutput": true,
+        "code-runner.runInTerminal": true,
+
+        // Safety: require confirmation before deleting files in Explorer
+        "explorer.confirmDelete": true,
+
+        "workbench.settings.applyToAllProfiles": []
+      }
+    }
+  }
+}
