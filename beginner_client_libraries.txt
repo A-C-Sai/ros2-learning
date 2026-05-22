@@ -1,0 +1,16 @@
+colcon -h
+colcon build -h
+colcon build [--executor {parallel [--parallel-workers <num>]|sequential}] (from root of workspace)
+	--packages-up-to : builds the package you want, plus all its dependencies, but not the whole workspace (saves time)
+	--symlink-install : saves you from having to rebuild every time you tweak python scripts
+	--event-handlers console_direct+ : shows console output while building (can otherwise be found in the log directory)
+colcon build --packages-select <pkg>
+colcon_cd <some_pkg>
+COLCON_IGNORE (empyt file; place inside the package directory)
+rosdep install -i --from-path src --rosdistro jazzy -y (from root of workspace)
+source /opt/ros/jazzy/setup.bash (underlay)
+cd ~/ros2_ws
+source install/local_setup.bash (overlay)
+source install/setup.bash (underlay+overlay)
+ros2 pkg create --build-type {ament_cmake|ament_python} [--licence Apache-2.0] [--node-name <executable_name>] <package_name> (inside src directory)
+
