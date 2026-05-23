@@ -18,6 +18,16 @@
   },
 
   // ---------------------------------------------------------------------------
+  // Workspace Mount Override
+  // Purpose: Explicitly mount the opened subfolder as the workspace root.
+  //          Required because (parent) is a git repo — without
+  //          this, VS Code detects the git root and mounts from there instead
+  //          of the subfolder you opened
+  // ---------------------------------------------------------------------------
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  // ---------------------------------------------------------------------------
   // Container Run Arguments
   // Purpose: Pass extra flags to `docker run` when the container starts:
   //   --privileged:         Required for VirtualGL and hardware device access
