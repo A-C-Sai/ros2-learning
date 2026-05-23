@@ -12,5 +12,5 @@ source /opt/ros/jazzy/setup.bash (underlay)
 cd ~/ros2_ws
 source install/local_setup.bash (overlay)
 source install/setup.bash (underlay+overlay)
-ros2 pkg create --build-type {ament_cmake|ament_python} [--licence Apache-2.0] [--node-name <executable_name>] <package_name> (inside src directory)
+ros2 pkg create --build-type {ament_cmake|ament_python} [--licence Apache-2.0] [--node-name <executable_name>] <package_name> [--dependencies dep1 dep2...]  (inside src directory)
 
