@@ -26,8 +26,11 @@ ros2 service list [-t / --show-types]
 ros2 service info <service_name>
 ros2 service find <type_name>
 ros2 interface show <type_name>
+ros2 interface list
 ros2 service call <service_name> <service_type> [<arguments>]
-ros2 service echo <service_name | service_type> <arguments> 
+ros2 service echo <service_name | service_type> <arguments>
+ros2 param set <node_name> service_configure_introspection contents
+ros2 param set <node_name> client_configure_introspection contents 
 ros2 pkg list
 ros2 pkg prefix <pkg>
 find $(ros2 pkg prefix <pkg>)/share/<pkg>/launch -type f
