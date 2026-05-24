@@ -63,7 +63,7 @@
   //                             available immediately on first open (workspace may be
   //                             empty on first clone; colcon handles that gracefully)
   // ---------------------------------------------------------------------------
-  "postCreateCommand": "mkdir -p ${containerWorkspaceFolder}/src && rosdep update && sudo rosdep install --from-paths src --ignore-src --rosdistro jazzy -y && sudo chown -R $(whoami) ${containerWorkspaceFolder}/ && cd ${containerWorkspaceFolder} && colcon build",
+  "postCreateCommand": "sudo chown -R $(whoami) ${containerWorkspaceFolder}/",
 
   // ---------------------------------------------------------------------------
   // VS Code Extensions

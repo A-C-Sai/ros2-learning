@@ -114,7 +114,7 @@ RUN echo "# ── ROS2 Environment ──────────────�
     echo "pgrep Xvfb > /dev/null || Xvfb :1 -screen 0 1920x1080x24 +extension GLX &>/dev/null &" >> /home/jazzy/.bashrc && \
     echo ""                                                                    >> /home/jazzy/.bashrc && \
     echo "# ── Convenience Aliases ───────────────────────────────────────────-" >> /home/jazzy/.bashrc && \
-    echo 'alias build="cd /workspaces/*/ && rosdep install -i --from-path src --rosdistro jazzy -y && colcon build && source ~/.bashrc"'      >> /home/jazzy/.bashrc && \
+    echo 'alias build="cd /workspaces/*/ && rosdep update && sudo rosdep install -i --from-path src --rosdistro jazzy -y && colcon build && source ~/.bashrc"'      >> /home/jazzy/.bashrc && \
     chown -R jazzy:jazzy /home/jazzy
 
 # -----------------------------------------------------------------------------
