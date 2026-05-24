@@ -33,8 +33,10 @@ include_directories(
 # Also make sure CMake knows about the program's dependencies.
 add_executable(cpp_service_lambda src/service_lambda.cpp)
 ament_target_dependencies(cpp_service_lambda ${dependencies})
-add_executable(cpp_client_lambda src/client_lambda.cpp)
-ament_target_dependencies(cpp_client_lambda ${dependencies})
+add_executable(cpp_client_lambda_1 src/client_lambda_1.cpp)
+ament_target_dependencies(cpp_client_lambda_1 ${dependencies})
+add_executable(cpp_client_lambda_2 src/client_lambda_2.cpp)
+ament_target_dependencies(cpp_client_lambda_2 ${dependencies})
 
 
 # Copy necessary files to designated locations in the project
@@ -53,7 +55,8 @@ install(
 install(
   TARGETS
   cpp_service_lambda
-  cpp_client_lambda
+  cpp_client_lambda_1
+  cpp_client_lambda_2
   DESTINATION lib/${PROJECT_NAME}
 )
 
