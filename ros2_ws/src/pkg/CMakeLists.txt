@@ -11,6 +11,7 @@ find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(example_interfaces REQUIRED)
+# find_package(interfaces REQUIRED)
 
 # Define a CMake variable named dependencies that lists all
 # ROS 2 packages and other dependencies the project requires.
@@ -18,6 +19,7 @@ set(dependencies
   rclcpp
   # std_msgs
   example_interfaces
+  # interfaces
 )
 
 # Add the specified directories to the list of paths that the compiler
