@@ -11,7 +11,9 @@ rqt
   Plugins > Services > Service Caller
   Introspection > Node Graph
   Plugins > Logging > Console
-ros2 run <pkg> <executable> --ros-args --remap __node:=<new_node_name>
+rqt_graph
+ros2 run <pkg> <executable> --ros-args --remap __node:=<new_node_name> -r <original_topic>:=<new_topic> -r <original_service>:=<new_service>
+# we cannot have two node with the same name
 ros2 node info <node_name>
 ros2 topic echo <topic_name>
 ros2 topic info <topic_name> [-v / --verbose]
