@@ -5,6 +5,8 @@ colcon build [--executor {parallel [--parallel-workers <num>]|sequential}] (from
 	--symlink-install : saves you from having to rebuild every time you tweak python scripts
 	--event-handlers console_direct+ : shows console output while building (can otherwise be found in the log directory)
 colcon build --packages-select <pkg>
+	--packages-up-to
+	--packages-above
 colcon_cd <some_pkg>
 COLCON_IGNORE (empyt file; place inside the package directory)
 rosdep install -i --from-path src --rosdistro jazzy -y (from root of workspace)
