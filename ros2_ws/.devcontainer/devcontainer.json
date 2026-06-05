@@ -102,21 +102,21 @@
       // -----------------------------------------------------------------------
       "settings": {
         // ROS2 IntelliSense
-        "ROS.distro": "jazzy",
+        "ROS2.distro": "jazzy",
         "python.autoComplete.extraPaths": [
           "/opt/ros/jazzy/lib/python3.12/site-packages",
           "/opt/ros/jazzy/local/lib/python3.12/dist-packages",
-          "/workspaces/${localWorkspaceFolderBasename}/install/lib/python3.12/site-packages"
+          "/workspaces/${localWorkspaceFolderBasename}/install/*/lib/python3.12/site-packages"
         ],
         "python.analysis.extraPaths": [
           "/opt/ros/jazzy/lib/python3.12/site-packages",
           "/opt/ros/jazzy/local/lib/python3.12/dist-packages",
-          "/workspaces/${localWorkspaceFolderBasename}/install/lib/python3.12/site-packages"
+          "/workspaces/${localWorkspaceFolderBasename}/install/*/lib/python3.12/site-packages"
         ],
         "C_Cpp.default.includePath": [
           "/opt/ros/jazzy/include/**",
-          "/workspaces/${localWorkspaceFolderBasename}/**",
-          "/workspaces/${localWorkspaceFolderBasename}/install/**"
+          "/workspaces/${localWorkspaceFolderBasename}/src/*/include/**",
+          "/workspaces/${localWorkspaceFolderBasename}/install/*/include/**"
         ],
         "C_Cpp.default.compilerPath": "/usr/bin/g++",
         "C_Cpp.default.cppStandard": "c++17",
