@@ -1,0 +1,20 @@
+# <namespace>:
+#   <node_name>:
+#     ros__parameters:
+#       <parameter_name>: <value>
+#       <parameter_name>: <value>
+
+#   <node_name>:
+#     ros__parameters:
+#       <parameter_name>: <value>
+#       <parameter_name>: <value>
+
+# /<node_name>:
+#   ros__parameters:
+#     <parameter_name>: <value>
+#     <parameter_name>: <value>
+
+# /<namespace>/<node_name>:
+#   ros__parameters:
+#     <parameter_name>: <value>
+#     <parameter_name>: <value>

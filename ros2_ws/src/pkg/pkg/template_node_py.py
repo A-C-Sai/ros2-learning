@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from example_interfaces.msg import String
 from example_interfaces.srv import AddTwoInts
+from rclpy.parameter import Parameter
 
 
 class SuperNode(Node):
@@ -18,9 +19,20 @@ class SuperNode(Node):
         self.create_timer(1.0, self.minimal_callback)
         '''
 
+        # Parameters
+        '''
+        self.declare_parameter("<param_name>",<default_value>) # default value can be overridden at runtime
+        self.<var>_ = self.get_parameter("<param_name>").value # we can validate params also instead of blindly assigning them to variables
+        '''
+
+        # Parameter Callback
+        '''
+        self.add_post_set_parameters_callback(self._post_set_parameter_callback)
+        '''
+
         # Publisher
         '''
-        self.publisher_ = self.create_publisher(String, "topic", 10)
+        self.publisher_ = self.create_publisher(String, "topic", 10) # adding a leading / to topic will not change even if add a namespace. This goes for node, service, topic etc.. names
         self.timer_ = self.create_timer(1.0, self.publish_)
         '''
 
@@ -52,6 +64,15 @@ class SuperNode(Node):
         self.counter_ += 1
     '''
 
+    # Parameter Callback
+    '''
+    def _post_set_parameter_callback(self, parameter_list: list[Parameter]):
+        for param in parameter_list:
+            if param.name == "<name>":
+                self.<var>_ = param.value
+    # NOTE: If changing timer period, we need to also use cancel() method on the existing timer and create a new timer.
+    '''
+
     # Publisher
     '''
     def publish_(self):
@@ -69,6 +90,7 @@ class SuperNode(Node):
     # Service
     '''
     def service_callback_(self, req: AddTwoInts.Request, res: AddTwoInts.Response):
+        # validation logic (optional)
         res.sum = req.a + req.b
         return res
     '''
@@ -88,12 +110,21 @@ class SuperNode(Node):
         req.a = 2
         req.b = 3
         future = self.client_.call_async(req)
+        # from functools import partial
+        # future.add_conde_callback(partial(self.response_callback_, request=req))
         future.add_done_callback(lambda future: self.response_callback_(future, request=req))
 
     def response_callback_(self, future, request):
         self.get_logger().info("Recieved response!")
         res = future.result()
         self.get_logger().info(f"Result: {request.a} + {request.b} = {res.sum}")
+    '''
+
+    # Current Time
+    '''
+    def get_current_time_seconds(self):
+        seconds, nanoseconds = self.get_clock().now().seconds_nanoseconds()
+        return seconds + (nanoseconds / 1e9)
     '''
 
 

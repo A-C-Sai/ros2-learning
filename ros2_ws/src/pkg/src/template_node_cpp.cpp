@@ -14,6 +14,9 @@ class SuperNode : public rclcpp::Node {
     //   this->counter_++;
     // }
 
+    // Parameter Callback
+    // rclcpp::node_interfaces::PostSetParametersCallbackHandle::SharedPtr param_cb_handle_;
+
     // Publisher
     // rclcpp::Publisher<example_interfaces::msg::String>::SharedPtr publisher_;
     // rclcpp::TimerBase::SharedPtr timer_;
@@ -67,6 +70,21 @@ class SuperNode : public rclcpp::Node {
       // this->timer_ = this->create_wall_timer(std::chrono::seconds(1),
       //                                  std::bind(&CustomNode::minimalCallback, this));
 
+      // Parameters
+      // this->declare_parameter("<param_name>", default_value); // default value can be overridden at runtime
+      // this-><var>_ = this->get_parameter("<param_name>").as_<data_type>(); // we can validate params also instead of blindly assigning them to variables
+
+      // Parameter Callback
+      // param_cb_handle_ = this->add_post_set_parameters_callback(
+      //   [this](const std::vector<rclcpp::Parameter> &parameters)->void{
+      //     for(const auto &param : parameters){
+      //       if(param.get_name() == "<param_name>"){
+      //         this-><var>_ = param.as_<data_type>();
+      //       }
+      //   }
+      //   // NOTE: If changing timer period, we need to also use cancel() method on the existing timer and create a new timer.
+      // );
+
       // Publisher
       // publisher_ = this->create_publisher<example_interfaces::msg::String>("topic", 10);
       // timer_ = this->create_wall_timer(std::chrono::seconds(1),
@@ -80,6 +98,7 @@ class SuperNode : public rclcpp::Node {
       // Server
       // server_ = this->create_service<example_interfaces::srv::AddTwoInts>("service",
       // [this](
+      //   // validation logic (optional)
       //   const example_interfaces::srv::AddTwoInts::Request::SharedPtr req,
       //   const example_interfaces::srv::AddTwoInts::Response::SharedPtr res
       // )->void{
