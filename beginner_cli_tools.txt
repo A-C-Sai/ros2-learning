@@ -13,6 +13,7 @@ rqt
   Plugins > Logging > Console
 rqt_graph
 ros2 run <pkg> <executable> --ros-args --remap __node:=<new_node_name> -r <original_topic>:=<new_topic> -r <original_service>:=<new_service>
+ros2 run <pkg> <exec> --ros-args -r __ns:=/<new_namespace>
 # we cannot have two node with the same name
 ros2 node info <node_name>
 ros2 topic echo <topic_name>
@@ -29,6 +30,7 @@ ros2 service info <service_name>
 ros2 service find <type_name>
 ros2 interface show <type_name>
 ros2 interface list
+ros2 interface package <pkg>
 ros2 service call <service_name> <service_type> [<arguments>]
 ros2 service echo <service_name | service_type> <arguments>
 ros2 param set <node_name> service_configure_introspection contents
@@ -36,7 +38,7 @@ ros2 param set <node_name> client_configure_introspection contents
 ros2 pkg list
 ros2 pkg prefix <pkg>
 find $(ros2 pkg prefix <pkg>)/share/<pkg>/launch -type f
-ros2 launch <pkg> <launch_file>
+ros2 launch <pkg> <launch_file> [config_file:=<filename>.yaml]
 ros2 param list [<node>]
 ros2 param get <node_name> <param_name>
 ros2 param set <node_name> <param_name> <value>
