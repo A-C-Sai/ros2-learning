@@ -1,0 +1,22 @@
+<!-- <launch>
+  <include file="$(find-pkg-share bringup)/launch/template_launch.py"/>
+  <node
+    pkg="<pkg>"
+    exec="<executable>"
+    name="<alias_ name>"
+    namespace="/<namespace>"
+  >
+    <param name="param_name" value="<value_enclosed_in_quotes>"/>
+    <remap from="old_topic/service/action" to="new_topic/service/action"/>
+  </node>
+  <node
+    pkg="<pkg>"
+    exec="<executable>"
+  />
+  <node
+    pkg="<pkg>"
+    exec="<executable>"
+  >
+    <param from="$(find-pkg-share bringup)/config/<filename>.yaml"/>
+  </node>
+</launch> -->

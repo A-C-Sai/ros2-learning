@@ -1,0 +1,2 @@
+bool status
+string additional_information
