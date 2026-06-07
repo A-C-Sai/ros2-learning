@@ -1,0 +1,73 @@
+#################
+Catch them all
+#################
+
+- Classic snake game using turtlesim.
+
+General Idea:
+  - One main turtle that hunts down other all other turtles
+  - Random turtles spwan:
+    - at a fixed/ variable rate
+    - at various locations
+  - main turtle's objective is:
+    - find neartest turtle (logically)
+    - and kills it (pyhsically move to to the turtle's location)
+  - killed turtle should be removed
+
+Nodes:
+- turtle_node from the turtlesim pkg
+- turtle_controller - node to control the main turtle (turtle1) which is spawned by default in the turtlesim_node:
+  - run a control loop (using a timer with a high rate) to reach a given target point.
+  - to control the turtle subscribe to /turtle1/pose [turtlesim/msg/Pose] and publish to /turtle1/cmd_vel [geometry_msgs/msg/Twist].
+  - the control loop will use a simplified P controller
+  - subscribe to the /alive_turtles topic to get all current turtles with coordinates. From that info, select a target turtle
+  - when a turtle has been caught be the master turtle, call the /catch_turtle advertised by the turtle_spawner node.
+- turtle_spawner - node to spwan turtles on the window, and manage which turtle is still alive:
+  - call /spawn [turtlesim/srv/Spawn] service (already advertised by turtle_node) to create a new turtle (coordinates b/w [0.0, 11.0] for both x and y)
+  - call /kill [turtlesim/srv/Kill] service (already advertised by turtle_node) to remove the turtle from the screen.
+  - publish the list of currently alive turtles with coordinates on a topic /alive_turtles
+  - handle a service service to catch a turtle i.e. call the /kill service and remove the turtle from the array of alive turtles.
+
+Custom Interfaces:
+- Turtle.msg and TurtleArray to send the list of turtles (name + coordinates) on the /alive_turtles topic
+- CatchTurtle.srv to send the name of the turtle which was caught. The client will be the turtle_controller node and the server will be the turtle_spawner node
+
+rqt_graph (nodes + topics):
+                                                        -----/turtle1/cmd_vel------>
+/turtle_spawner ---/alive_turtles---> /turtle_controller                              /turtlesim
+                                                        <----/turtle1/pose----------
+
+
+Possible Paramaters:
+
+- /turtle_controller:
+  - catch_closest_turtle_first
+
+- /turtle_spawner:
+  - spawn_frequency
+  - turtle_name_prefix
+
+
+Roadmap:
+
+1. Create the turtle_controller node, subscribe to /turtle1/pose. 
+Create a control loop to reach a given target (for now an arbitrary one). 
+proportional_steering_controller_2d.pdf covers math will be required to find the distances and angles. 
+Send the command to the /turtle1/cmd_vel topic.
+
+2. Create the turtle_spawner node. 
+With a timer, spawn a new turtle at a given rate. To spawn a turtle, call the /spawn service.
+
+3. Keep an array of alive turtles (name + coordinates) in the turtle_spawner node. 
+Publish this array on the /alive_turtles topic. 
+On the turtle_controller node, subscribe to the topic, get the array, 
+and choose to select the first turtle on the array as the new target.
+
+4. Create a service /catch_turtle in turtle_spawner.
+Once the turtle_controller has reached a turtle, it will send the turtle name to that service.
+Then, from the turtle_spawner node, call the /kill service, 
+remove the turtle from the array, and publish an updated array to /alive_turtles.
+
+5. Improve the turtle_controller to select the closest turtle instead of the first turtle on the array.
+
+6. Add parameters and create a launch file + YAML param file.
