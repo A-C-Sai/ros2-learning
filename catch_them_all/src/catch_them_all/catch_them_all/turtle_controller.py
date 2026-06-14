@@ -61,7 +61,7 @@ class TurtleController(Node):
             angular_velocity = K_ANGLULAR * angle_error
             linear_velocity = K_LINEAR * distance * math.cos(angle_error)
 
-            # send command cmd_vel topic
+            # send command to cmd_vel topic
             twist_obj = Twist()
             twist_obj.linear.x = linear_velocity
             twist_obj.angular.z = angular_velocity
@@ -78,8 +78,6 @@ def main(args=None):
 
     try:
         rclpy.init(args=args)
-        # node = Node("my_node")
-        # node.get_logger().info("Hello World")
         node = TurtleController()
         rclpy.spin(node)
     except KeyboardInterrupt:
