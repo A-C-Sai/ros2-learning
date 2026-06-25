@@ -15,7 +15,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(turtlesim REQUIRED)
 find_package(geometry_msgs REQUIRED)
-# find_package(interfaces REQUIRED)
+find_package(interfaces REQUIRED)
 
 # Define a CMake variable named dependencies that lists all
 # ROS 2 packages and other dependencies the project requires.
@@ -23,7 +23,7 @@ set(dependencies
   rclcpp
   turtlesim
   geometry_msgs
-  # interfaces
+  interfaces
 )
 
 # Add the specified directories to the list of paths that the compiler

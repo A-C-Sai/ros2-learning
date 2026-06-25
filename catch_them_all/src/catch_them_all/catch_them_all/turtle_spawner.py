@@ -4,7 +4,9 @@ import rclpy
 from rclpy.node import Node
 import random
 import math
-from turtlesim.srv import Spawn
+from turtlesim.srv import Spawn, Kill
+from interfaces.msg import Turtle, TurtleArray
+from interfaces.srv import CatchTurtle
 
 
 class TurtleSpawner(Node):
@@ -13,25 +15,26 @@ class TurtleSpawner(Node):
 
         super().__init__("turtle_spawner")
 
-        self.lower_boundary_ = 0.0
-        self.upper_boundary_ = 11.0
-        self.period_ = 1.0
+        self.alive_turtles_ = TurtleArray()
+        self.publisher_ = self.create_publisher(TurtleArray, "alive_turtles", 10)
 
         self.spawn_client_ = self.create_client(Spawn, "spawn")
-        self.service_check_timer_ = self.create_timer(self.period_, self.check_service_)
+        self.spawn_turtle_timer = self.create_timer(0.5, self.spawn_turtle_)
+
+        self.catch_turtle_service_ = self.create_service(
+            CatchTurtle, "catch_turtle", self.callback_catch_turtle_)
+        self.kill_client_ = self.create_client(Kill, "kill")
 
         self.get_logger().info("Turtle Spawner has been started.")
 
-    def check_service_(self):
-        if self.spawn_client_.service_is_ready():
-            self.get_logger().info("Spawn service available!")
-            self.spawn_turtle_()
-        else:
-            self.get_logger().warn("Waiting for Service")
-
     def spawn_turtle_(self):
-        pos_x, pos_y = (random.uniform(self.lower_boundary_, self.upper_boundary_),
-                        random.uniform(self.lower_boundary_, self.upper_boundary_))
+        while not self.spawn_client_.service_is_ready():
+            self.get_logger().warn("waiting for spawn service....")
+        else:
+            self.get_logger().info("spawn service available!")
+
+        pos_x, pos_y = (random.uniform(0.0, 11.0),
+                        random.uniform(0.0, 11.0))
         theta = random.uniform(0.0, 2 * math.pi)
 
         req = Spawn.Request()
@@ -40,14 +43,50 @@ class TurtleSpawner(Node):
         req.theta = theta
 
         future = self.spawn_client_.call_async(req)
-        future.add_done_callback(lambda future: self.response_callback_(future, request=req))
+        future.add_done_callback(lambda future: self.callback_spawn_turtle_(future, request=req))
 
-    def response_callback_(self, future, request):
-        res = future.result()
-        self.get_logger().info(f'''New turtle spawned!
-                             Name: {res.name}
-                             (x,y): ({request.x},{request.y})
-                             facing: {round(request.theta * (180 / math.pi), 1)}°''')
+    def callback_spawn_turtle_(self, future, request):
+        res: Spawn.Response = future.result()
+
+        if res.name:
+            self.get_logger().info(f'''New turtle spawned!
+                                Name: {res.name}
+                                (x,y): ({request.x},{request.y})
+                                facing: {round(request.theta * (180 / math.pi), 1)}°''')
+
+        new_turtle = Turtle()
+        new_turtle.name = res.name
+        new_turtle.x = request.x
+        new_turtle.y = request.y
+
+        self.alive_turtles_.turtles.append(new_turtle)
+
+        self.publisher_.publish(self.alive_turtles_)
+
+    def callback_catch_turtle_(self, req: CatchTurtle.Request, res: CatchTurtle.Response):
+
+        self.call_kill_service_(req.turtle_name)
+
+        res.success = True
+        return res
+
+    def call_kill_service_(self, turtle_name):
+        while not self.kill_client_.wait_for_service(1.0):
+            self.get_logger().warn("waiting for kill service!")
+
+        request = Kill.Request()
+        request.name = turtle_name
+        future = self.kill_client_.call_async(request)
+        future.add_done_callback(
+            lambda future: self.callback_call_kill_service_(
+                future, name=turtle_name))
+
+    def callback_call_kill_service_(self, future, name):
+
+        names = [turtle.name for turtle in self.alive_turtles_.turtles]
+        idx = names.index(name)
+        self.alive_turtles_.turtles.pop(idx)
+        self.publisher_.publish(self.alive_turtles_)
 
 
 def main(args=None):

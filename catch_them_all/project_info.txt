@@ -52,7 +52,7 @@ Roadmap:
 
 1. Create the turtle_controller node, subscribe to /turtle1/pose.
 Create a control loop to reach a given target (for now an arbitrary one).
-proportional_steering_controller_2d.pdf covers math will be required to find the distances and angles.
+proportional_steering_controller_2d.pdf covers math that will be required to find the distances and angles.
 Send the command to the /turtle1/cmd_vel topic.
 
 2. Create the turtle_spawner node.
