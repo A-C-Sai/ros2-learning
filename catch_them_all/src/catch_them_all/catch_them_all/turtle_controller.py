@@ -85,7 +85,7 @@ def main(args=None):
     except Exception as e:
         print(f"[-] An error occured: {e}")
     finally:
-        if node is not Node:
+        if node is not None:
             node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()

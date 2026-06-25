@@ -69,6 +69,7 @@ ament_python_install_package(${PROJECT_NAME})
 install(
   PROGRAMS
   catch_them_all/turtle_controller.py
+  catch_them_all/turtle_spawner.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
