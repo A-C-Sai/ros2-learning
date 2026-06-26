@@ -23,37 +23,17 @@ cd ~/ros2_ws
 2. Run `stop.sh` on Host Machine
 ---
 
-## Container Credentials
-
-| Item | Value |
-|---|---|
-| Username | `jazzy` |
-| Password | `jazzy` |
-| Sudo | Full `(ALL:ALL) ALL` |
-| Default directory | `/workspaces/ros_ws` |
-
----
-
 ## Common Commands
 
 ```bash
 # Build the workspace (alias defined in .bashrc)
 build
 
-# Manual equivalent
-cd ~/ros2_ws && colcon build --symlink-install && source ~/.bashrc
-
 # Launch a GUI app (X11 forwarding)
 ros2 run rviz2 rviz2
 
 # Launch with VirtualGL acceleration
 vglrun ros2 run rviz2 rviz2
-
-# Update rosdep index
-rosdep update
-
-# Install dependencies for all packages in src/
-rosdep install --from-paths src --ignore-src -r -y
 ```
 
 ---
