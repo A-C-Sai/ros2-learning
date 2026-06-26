@@ -14,12 +14,14 @@ class TurtleSpawner(Node):
     def __init__(self):
 
         super().__init__("turtle_spawner")
+        self.declare_parameter("spawn_frequency", 1.0)
 
         self.alive_turtles_ = TurtleArray()
         self.publisher_ = self.create_publisher(TurtleArray, "alive_turtles", 10)
 
         self.spawn_client_ = self.create_client(Spawn, "spawn")
-        self.spawn_turtle_timer = self.create_timer(0.5, self.spawn_turtle_)
+        self.spawn_turtle_timer = self.create_timer(
+            1.0 / self.get_parameter("spawn_frequency").value, self.spawn_turtle_)
 
         self.catch_turtle_service_ = self.create_service(
             CatchTurtle, "catch_turtle", self.callback_catch_turtle_)

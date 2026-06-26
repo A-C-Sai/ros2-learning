@@ -1,0 +1,9 @@
+<launch>
+  <node pkg="turtlesim" exec="turtlesim_node"/>
+  <node pkg="catch_them_all" exec="turtle_controller.py">
+    <param from="$(find-pkg-share bringup)/config/catch_them_all_launch.yaml"/>
+  </node>
+  <node pkg="catch_them_all" exec="turtle_spawner.py">
+    <param from="$(find-pkg-share bringup)/config/catch_them_all_launch.yaml"/>
+  </node>
+</launch>

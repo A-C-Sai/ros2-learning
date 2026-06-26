@@ -14,11 +14,17 @@ class TurtleController(Node):
     def __init__(self):
 
         super().__init__("turtle_controller")
+        self.declare_parameter("catch_closest_turtle", True)
+        self.declare_parameter("K_ANGULAR_BASE", 1.0)
+        self.declare_parameter("K_LINEAR_BASE", 1.0)
+        self.declare_parameter("GROWTH_RATE", 0.05)  # 5% increase per catch
+        self.declare_parameter("MAX_MULTIPLIER", 5.0)  # cap so it doesn't get absurd
 
         self.pose_: Pose = None
         self.target_turtle_: Turtle = None
-        self.catch_closest_turtle_ = True
+        self.catch_closest_turtle_ = self.get_parameter("catch_closest_turtle").value
         self.caught_turtles_ = []
+        self.number_turtles_caught_ = 0
 
         self.cmd_vel_pub_ = self.create_publisher(Twist,
                                                   "/turtle1/cmd_vel",
@@ -56,7 +62,8 @@ class TurtleController(Node):
                         closest_turtle = turtle
                         closest_turtle_distance = distance
                 else:
-                    self.target_turtle_ = closest_turtle
+                    if closest_turtle.name not in self.caught_turtles_:  # ignoring duplicate targets due to race conditions
+                        self.target_turtle_ = closest_turtle
             else:
                 self.target_turtle_ = alive_turtles.turtles[0]
 
@@ -76,6 +83,16 @@ class TurtleController(Node):
                 f"{request.turtle_name} successfully elimated and cleared from sim!")
         else:
             self.get_logger().error(f"Unsuccessful in eliminating {request.turtle_name}!")
+
+    def get_scaled_constants(self):
+        GROWTH_RATE = self.get_parameter("GROWTH_RATE").value
+        MAX_MULTIPLIER = self.get_parameter("MAX_MULTIPLIER").value
+        K_ANGULAR_BASE = self.get_parameter("K_ANGULAR_BASE").value
+        K_LINERA_BASE = self.get_parameter("K_LINEAR_BASE").value
+        multiplier = min(1 + GROWTH_RATE * self.number_turtles_caught_, MAX_MULTIPLIER)
+        k_angular = K_ANGULAR_BASE * multiplier
+        k_linear = K_LINERA_BASE * multiplier
+        return k_angular, k_linear
 
     def control_loop_(self):
 
@@ -101,8 +118,7 @@ class TurtleController(Node):
                         self.pose_.theta))
 
                 # compute velocities
-                K_ANGLULAR = 2.0
-                K_LINEAR = 1.5
+                K_ANGLULAR, K_LINEAR = self.get_scaled_constants()
 
                 angular_velocity = K_ANGLULAR * angle_error
                 linear_velocity = K_LINEAR * distance * math.cos(angle_error)
@@ -115,12 +131,12 @@ class TurtleController(Node):
                 self.cmd_vel_pub_.publish(twist_obj)
             else:
                 self.cmd_vel_pub_.publish(Twist())
+                self.caught_turtles_.append(self.target_turtle_.name)
+                self.number_turtles_caught_ += 1
                 while not self.catch_turtle_client_.service_is_ready():
                     self.get_logger().warn("waiting for catch turtle service!")
                 else:
-                    if self.target_turtle_.name not in self.caught_turtles_:  # ignoring duplicate kill requests due to race conditions
-                        self.caught_turtles_.append(self.target_turtle_.name)
-                        self.send_catch_turtle_request_(self.target_turtle_.name)
+                    self.send_catch_turtle_request_(self.target_turtle_.name)
                     self.target_turtle_ = None
 
 
