@@ -71,3 +71,10 @@ remove the turtle from the array, and publish an updated array to /alive_turtles
 5. Improve the turtle_controller to select the closest turtle instead of the first turtle on the array.
 
 6. Add parameters and create a launch file + YAML param file.
+
+
+Possible additions:
+- make newly spawned turtles move randomly:
+  - need to be able to keep an eye on each turtle.
+  - dynamically create a subscription for each alive turtle’s pose.
+  - create a “middle” node whose goal is to monitor the playground, and tell the turtle controller where to go at any given time.
