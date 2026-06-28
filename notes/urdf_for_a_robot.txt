@@ -1,0 +1,83 @@
+urdf = unified robot description format
+
+https://wiki.ros.org/urdf/XML
+
+- XML-based format used to describ a robot's physical structure
+- Links: Represent rigid components of the robot
+- Joints: Define how these components are connected and how they move relative to one another. By defining these elements, ROS 2 can generate the necessary TF (Transformations) to understand the robot's structure in 3D space.
+
+- Most important thing to get:
+	- how to assemble 2 parts (links) of the robot with a joint 
+
+my_robot.urdf:
+
+<?xml version="1.0"?>
+<robot name="my_robot">
+
+	<material name="green">
+			<color rgba="0 1 0 1" />
+	</material>
+
+	<material name="grey">
+			<color rgba="0.5 0.5 0.5 1" />
+	</material>
+
+	<link name="base_link">
+		<visual>
+			<geometry>
+				<box size="0.6 0.4 0.2" /> <!-- in meters -->
+			</geometry>
+			<origin xyz="0 0 0.1" rpy="0 0 0"/> <!-- rpy = roll, pitch, yaw in radians -->
+			<material name="green"/>
+		</visual>
+	</link>
+
+	<link name="second_link">
+		<visual>
+			<geometry>
+				<cylinder radius="0.1" length="0.05" />
+			</geometry>
+			<!-- Initially set origin to 0 0 0 -->
+			<origin xyz="0 0 0.025" rpy="0 0 0"/>
+			<material name="grey"/>
+		</visual>
+	</link>
+
+
+	<joint name="base_second_joint" type="fixed">
+		<parent link="base_link" />
+		<child link="second_link" />
+		<!-- Initially set origin to 0 0 0 -->
+		<!-- Modify the joint origin first b4 origin of the link -->
+		<!-- Get the TF correct first not the visual -->
+		<origin xyz="0 0 0.2" rpy="0 0 0" />
+	</joint>
+
+</robot>
+
+vglrun ros2 launch urdf_tutorial display.launch.py model:=/workspaces/ros2_ws/my_robot.urdf
+
+there are different types of joints:
+
+<joint name="base_second_joint" type="revolute">
+	<parent link="base_link" />
+	<child link="second_link" />	
+	<origin xyz="0 0 0.2" rpy="0 0 0" />
+	<axis xyz="0 0 1" />
+	<limit lower="0" upper="6.28" effort="100" velocity="100" />
+</joint>
+
+<joint name="base_second_joint" type="continuous">
+	<parent link="base_link" />
+	<child link="second_link" />	
+	<origin xyz="0 0 0.2" rpy="0 0 0" />
+	<axis xyz="0 0 1" /> <!-- +ve or -ve 1 will dictate if we take counter-clockwise or clockwise as +ve -->
+</joint>
+
+<joint name="base_second_joint" type="prismatic">
+	<parent link="base_link" />
+	<child link="second_link" />	
+	<origin xyz="0 0 0.2" rpy="0 0 0" />
+	<axis xyz="0 0 1" />
+	<limit lower="0" upper="0.3" effort="100" velocity="100" />
+</joint>

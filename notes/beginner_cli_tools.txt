@@ -1,0 +1,65 @@
+ros2 pkg executables <pkg>
+ros2 run <pkg> <executable>
+	ros2 run turtlesim turtlesim_node
+	ros2 run turtlesim turtle_teleop_key
+	ros2 run rqt_graph rqt_graph 
+ros2 node list
+ros2 topic list [-t]
+ros2 service list
+ros2 action list
+rqt
+  Plugins > Services > Service Caller
+  Introspection > Node Graph
+  Plugins > Logging > Console
+rqt_graph
+ros2 run <pkg> <executable> --ros-args --remap __node:=<new_node_name> -r <original_topic>:=<new_topic> -r <original_service>:=<new_service>
+ros2 run <pkg> <exec> --ros-args -r __ns:=/<new_namespace>
+# we cannot have two node with the same name
+ros2 node info <node_name>
+ros2 topic echo <topic_name>
+ros2 topic info <topic_name> [-v / --verbose]
+ros2 interface show <msg_type>
+ros2 topic pub [--once] [-w <number>] <topic_name> <msg_type> ['<args>' / \'<TAB>] [--rate 1]
+ros2 topic hz <topic_name>
+ros2 topic bw <topic_name>
+ros2 topic find <topic_type>
+ros2 service list
+ros2 service type <service_name>
+ros2 service list [-t / --show-types]
+ros2 service info <service_name>
+ros2 service find <type_name>
+ros2 interface show <type_name>
+ros2 interface list
+ros2 interface package <pkg>
+ros2 service call <service_name> <service_type> [<arguments>]
+ros2 service echo <service_name | service_type> <arguments>
+ros2 param set <node_name> service_configure_introspection contents
+ros2 param set <node_name> client_configure_introspection contents 
+ros2 pkg list
+ros2 pkg prefix <pkg>
+find $(ros2 pkg prefix <pkg>)/share/<pkg>/launch -type f
+ros2 launch <pkg> <launch_file> [config_file:=<filename>.yaml]
+ros2 param list [<node>]
+ros2 param get <node_name> <param_name>
+ros2 param set <node_name> <param_name> <value>
+ros2 service echo --flow-style <service>
+ros2 param dump <node_name> [> <file>.yaml]
+ros2 param load <node_name> <param_file>
+ros2 run <pkg_name> <node_name> --ros-args --params-file <file_name> 
+ros2 interface list
+ros2 action list [-t]
+ros2 action type <action>
+ros2 action info <action>
+ros2 action send_goal <action_name> <action_type> <values> [--feedback]
+ros2 run <pkg> <executable> --ros-args --log-level {FATAL|ERROR|WARN|INFO|DEBUG}
+mkdir bag_files && cd bag_files
+ros2 bag record <topic_name>
+ros2 bag record -o <bag_file_name> <topic_name> <topic_name> ...
+ros2 bag record -a
+ros2 bag info <bag_file_name>
+ros2 bag play <bag_file_name>
+ros2 run <pkg> <executable> --ros-args -p <param_name>:=<value>
+ros2 bag record --service <service_name>
+ros2 bag record --all-services
+ros2 bag play --publish-service-requests <bag_file_name>
+

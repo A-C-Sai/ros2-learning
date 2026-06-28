@@ -1,0 +1,123 @@
+tf2 = ROS2 lib for transforming b/w coordinate frames.
+
+Purpose: Track where every robot part/sensor is relative to every other part, and convert coordinates between them automatically.
+
+Problem it solves: Each sensor/part has its own coordinate "frame." A camera sees a cup in its frame; the gripper needs that cup's position in its own frame to grab it. tf2 does this conversion math for you.
+
+Core idea — Frames + Tree:
+- Every part = a named frame (map, odom, base_link, camera_frame, gripper_frame ...)
+- Frames are arranged in a parent→child tree. You only define direct relationships; tf2 chains them to answer questions about any frame pair.
+
+Typical tree:
+
+				map
+         |
+        odom
+         |
+        base_link  (robot body)
+        /        \
+   camera_frame  arm_base
+                    |
+                gripper_frame
+
+Transforms define the translations and rotations needed to get from a source frame to a target frame – whether it’s parent-to-child, child-to-parent, or across multiple “generations” of frames.
+
+Each child frame has a transform that represents its position vector and rotation in relation to its parent frame. 
+
+A complete set of a scene’s transforms, from the base frame to all its related children, constitutes a transform tree.
+
+With a transform tree, you can quickly find the position and orientation of any given frame in the scene, no matter how many levels removed you are from the base. 
+
+Two types of transforms:
+- Static — fixed relationships (e.g., camera bolted to robot body). Published once.
+- Dynamic — changing relationships (e.g., arm joints moving, wheels driving, localization updates). Published continuously.
+
+Typical frame roles:
+- map — fixed real-world frame
+- odom — robot's internal position estimate (smooth, but drifts)
+- base_link — robot body
+- sensor/limb frames — attached to base_link or to each other
+
+How you use it day-to-day:
+1. Publish transforms (mounting offsets, joint states, odometry, localization — often automatic via URDF/joint_states).
+2. Ask tf2: "give me this point, but in frame X instead of frame Y" — tf2 walks the tree and returns the converted coordinates.
+
+Why not do the math manually: Many frames update independently and continuously; tf2 also keeps a time history, so you can ask where something was relative to another frame at a past timestamp (important when sensor data arrives with delay).
+
+TL;DR:
+Frames = coordinate system describing an object’s position and orientation, typically along x, y, and z axes
+Transforms = relationships between frames; express an object’s position and orientation in relation to another.
+Tree = structure linking them; parent-child structure so you only define direct relationships, never every possible pair.
+tf2 = maintains it all over time and converts between any two frames on request.
+
+
+- /opt/ros/jazzy/share/urdf_tutorial/urdf
+- ros2 launch urdf_tutorial display.launch.py --show-arguments
+- vglrun ros2 launch urdf_tutorial display.launch.py model:=./urdf/08-macroed.urdf.xacro will open:
+    - RViz (3D viz tool) Note: this is different from gazebo
+    - Joint State Publisher (GUI): allows you to interactively manipulate each joint of the robot. Every time you operate the joint, RViz updates all the linked child links, reflecting the transformation of the entire robot in real time.
+    - Robot State Publisher: Publish the conversion (TF) of each part.
+
+Global Options
+    - Fixed Frame
+
+RobotModel - Displays all the rigid body parts (links) of the robot.
+    - Links
+    - Alpha
+
+TF - Each coordinate frame (an origin point + 3 axes (X, Y, Z))) and its parent-child relationship are shown.
+    - Frames: every link gets its own frame
+        - Red = x-axis
+        - Green = y-axis
+        - Blue = z-axis
+    - Arrow tip = Parent
+    - Arrow tail = Child
+    - Tree
+
+ros2 topic list:
+    /joint_states
+    /parameter_events
+    /robot_description
+    /rosout
+    /tf (mobile transforms)
+    /tf_static (static transforms)
+
+ros2 topic echo /tf_static:
+- header:
+    stamp:
+      sec: 1782612443
+      nanosec: 5992883
+    frame_id: base_link ----> name of the parent coordinate frame
+  child_frame_id: left_leg -----> name of the child coordinate frame
+  transform: ---> data describing the position and orientation of the child frame relative to the parent frame
+    translation:
+      x: 0.0
+      y: 0.22
+      z: 0.25
+    rotation: ---> quaternion not euler
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+
+ros2 run tf2_tools view_frames ---> outputs a .gv and .pdf (TF tree ) in the directory from which this command is run
+
+What we try to achieve with TFs / TransForms:
+    - keep a structured tree for all the joints/frames over time
+
+We want to know:
+    - how frames are placed relative to one another
+    - how they move relative to each other
+
+Why is TF Important?
+
+The TF system is fundamental because it provides the answers to three critical questions regarding a robot's state:
+    - Where is each link or sensor located within the robot's overall structure?
+    - How do these components move over time?
+    - At any specific moment, what is the position of one frame relative to another?
+
+These answers are vital for high-level tasks such as navigation, sensor data processing, and manipulation. Manually calculating the 3D translation and rotation for every joint would be a tedious and error-prone process. The TF system automates these calculations, allowing developers to focus on defining the robot's parts and joints rather than the underlying mathematics.
+
+From TF to URDF
+
+To generate TF data for a custom robot, you must write a URDF (Unified Robot Description Format) file. This file serves as a blueprint that describes the physical properties of each link and joint, as well as their connectivity. Once defined, ROS 2 uses packages like robot_state_publisher to read the URDF and generate real-time TF information automatically. This method ensures that the robot's shape, kinematics, and transformation data remain organized and consistent, which is crucial for professional robotics projects.
