@@ -1,0 +1,4 @@
+colcon test --packages-select unit_tests
+colcon test --packages-select unit_tests --event-handlers console_direct+
+colcon test-result --all
+colcon test-result --all --verbose
