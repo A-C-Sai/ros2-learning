@@ -29,6 +29,7 @@ RUN apt-get update -y && apt-get upgrade -y && \
         gedit \
         xvfb \
         linux-headers-generic \
+	tree \
     && rm -rf /var/lib/apt/lists/*
 
 # -----------------------------------------------------------------------------
