@@ -102,6 +102,13 @@ ros2 topic echo /tf_static:
 
 ros2 run tf2_tools view_frames ---> outputs a .gv and .pdf (TF tree ) in the directory from which this command is run
 
+ros2 run tf2_ros static_transform_publisher x y z yaw pitch roll parent_frame child_frame ---> broadcasts a static transform, the child_frame relaive to the parent_frame
+
+ros2 run tf2_ros static_transform_publisher 1 -2 0 -0.785 0 0 world robot_1
+ros2 run tf2_ros static_transform_publisher 0 1 0 0 0 0 robot_1 robot_2
+ros2 run rviz2 rviz2 OR rivz2 --> click Add at bottom corner and choose TF, then change Fixed Frame from map to world
+stop the first terminal then do "ros2 run tf2_ros static_transform_publisher 1 -2 0 -1.57 0 0 world robot_1" and observe the changes in rviz
+
 What we try to achieve with TFs / TransForms:
     - keep a structured tree for all the joints/frames over time
 
@@ -121,3 +128,6 @@ These answers are vital for high-level tasks such as navigation, sensor data pro
 From TF to URDF
 
 To generate TF data for a custom robot, you must write a URDF (Unified Robot Description Format) file. This file serves as a blueprint that describes the physical properties of each link and joint, as well as their connectivity. Once defined, ROS 2 uses packages like robot_state_publisher to read the URDF and generate real-time TF information automatically. This method ensures that the robot's shape, kinematics, and transformation data remain organized and consistent, which is crucial for professional robotics projects.
+
+-> UDRDF: a tree of Links connected by Joints
+-> TF: A tree of Frames connected by Transforms
