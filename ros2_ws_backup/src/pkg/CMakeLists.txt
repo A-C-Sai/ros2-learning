@@ -71,7 +71,7 @@ install(
 #   DESTINATION lib/${PROJECT_NAME}
 # )
 
-# Uncomment Section if any scripts are present 
+# Uncomment Section if any scripts are present
 # Make sure your script actually has the executable bit set
 # Install python scripts
 # install(
@@ -82,6 +82,10 @@ install(
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+
+  find_package(ament_cmake_pytest REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
+
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
@@ -90,6 +94,22 @@ if(BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+
+  # Python tests
+  # ament_add_pytest_test(<executable> test/pytest/<filename>.py
+  #   TIMEOUT 60
+  # )
+
+  # C++ tests
+  # ament_add_gtest(
+  #   <executable> test/gtest/<filename>.cpp
+  # )
+
+  # Add dependencies for the C++ test executable
+  # ament_target_dependencies(<executable>
+  #   ${dependencies}
+  # )
+
 endif()
 
 # Used to export include directories of a package so that they can be easily
