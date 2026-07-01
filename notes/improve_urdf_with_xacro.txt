@@ -1,0 +1,82 @@
+Make the URDF compatible with Xacro
+
+my_robot.urdf ---> my_robot.urdf.xacro (main file) or my_robot.xacro (supporting files)
+
+<robot name="my_robot" xmlns:xacro="http://www.ros.org.wiki/xacro">
+</robot>
+
+--------------------
+
+Create Variables with Xacro Properties
+
+
+<robot name="my_robot" xmlns:xacro="http://www.ros.org.wiki/xacro">
+	
+	<xacro:property name="wheel_radius" vaulue="0.1">
+
+	...
+
+	<link name="right_wheel_link">
+		<visual>
+			<origin xyz="0 0 0" rpy="${pi / 2.0} 0 0" />
+			<geometry>
+				<cylinder radius="${wheel_radius}" length="0.05" />
+			</geometry>
+			<material name="grey" />
+		</visual>
+	</link>
+
+	...
+
+</robot>
+
+--------------------
+
+Create Functions with Xacro Macros (this of this as code snippets)
+
+
+<xacro:macro name="example_macro" params="a b c">
+
+	<link name="dummy_link">
+		<visual>
+			<geometry>
+				<box size="${a} ${b} ${c}" />
+			</geometry>
+		</visual>
+	</link>
+
+</xacro:macro>
+
+<xacro:example_macro a="2" b="4", c="3" />
+
+
+--------------------
+
+Splitting URDF into multiple files and Include a Xacro File in Another Xacro File
+
+Supporting files: ----> these files won't be run independently
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org.wiki/xacro"> ----> don't add name here, as it is already defined the main urdf file.
+	content
+</robot>
+
+Main file:
+<xacro:include filename="supporting_file.xacro" />
+
+the include order may matter... e.g. include the common variables file files so that the sub-sequent imports have access to them.
+
+--------------------
+
+The Xacro command to generate the URDF
+
+xacro <path_to_main_urdf_file> -----> this is collect all the imports, substitues the values and create a single URDF file.
+
+--------------------
+
+Real Meshes
+
+<mesh>
+
+    A trimesh element specified by a filename, and an optional scale that scales the mesh's axis-aligned-bounding-box. Any geometry format is acceptable but specific application compatibility is dependent on implementation. The recommended format for best texture and color support is Collada .dae files. The mesh file is not transferred between machines referencing the same model. It must be a local file. Prefix the filename with package://<packagename>/<path> to make the path to the mesh file relative to the package <packagename>.
+
+e.g. <mesh filename="package://turtlebot3_description/meshes/bases/waffle_base.stl" scale="0.001 0.001 0.001"/>
